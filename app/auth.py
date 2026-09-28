@@ -33,6 +33,7 @@ def verify_api_key(
          ``ANONYMOUS_USER``. user_id này là đơn vị để rate limit và tính chi phí.
 
     Gợi ý: dùng ``status.HTTP_401_UNAUTHORIZED`` cho dễ đọc.
+    """
     expected_key = get_settings().agent_api_key
     if x_api_key is None or not secrets.compare_digest(x_api_key, expected_key):
         raise HTTPException(
