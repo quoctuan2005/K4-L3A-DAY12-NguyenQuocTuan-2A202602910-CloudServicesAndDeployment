@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -37,6 +38,7 @@ except ImportError:  # pragma: no cover
 TEST_API_KEY = "test-api-key-cua-lab"
 os.environ["AGENT_API_KEY"] = TEST_API_KEY
 os.environ["REDIS_URL"] = "fake://"
+os.environ.setdefault("GEMINI_API_KEY", "test-gemini-key")
 
 
 def pytest_configure(config):
@@ -95,6 +97,22 @@ def api_key() -> str:
 @pytest.fixture
 def auth_headers(api_key) -> dict:
     return {"X-API-Key": api_key, "X-User-Id": "sv-test"}
+
+
+@pytest.fixture(autouse=True)
+def _mock_ask_llm():
+    """Mock ask_llm để test không gọi Gemini API thật."""
+    from utils.mock_llm import ask_llm as mock_ask
+
+    try:
+        import app.music_agent
+        import app.main
+
+        with patch("app.music_agent.ask_llm", side_effect=mock_ask):
+            with patch("app.main.ask_llm", side_effect=mock_ask):
+                yield
+    except (ImportError, AttributeError):
+        yield
 
 
 @pytest.fixture(autouse=True)

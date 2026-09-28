@@ -42,6 +42,7 @@ class Settings(BaseSettings):
 
     port: int = 8000
     agent_api_key: str
+    gemini_api_key: str = ""
     redis_url: str = "redis://localhost:6379/0"
     rate_limit_per_minute: int = 10
     monthly_budget_usd: float = 10.0

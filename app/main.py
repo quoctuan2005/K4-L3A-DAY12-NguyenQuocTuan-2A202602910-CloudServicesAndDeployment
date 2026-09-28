@@ -15,12 +15,14 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 from functools import lru_cache
+from pathlib import Path
 
 from fastapi import Depends, FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from utils.mock_llm import ask_llm
+from .music_agent import ask_llm
 
 from .auth import verify_api_key
 from .config import get_settings
@@ -63,7 +65,16 @@ async def lifespan(_app: FastAPI):
     log_event("service_stopped", service=SERVICE_NAME)
 
 
-app = FastAPI(title="Day 12 Production Agent", version=SERVICE_VERSION, lifespan=lifespan)
+app = FastAPI(title="Music Mood Agent", version=SERVICE_VERSION, lifespan=lifespan)
+
+# Serve frontend
+_STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
+
+@app.get("/", response_class=HTMLResponse)
+def index():
+    return (_STATIC_DIR / "index.html").read_text(encoding="utf-8")
 
 
 class AskRequest(BaseModel):

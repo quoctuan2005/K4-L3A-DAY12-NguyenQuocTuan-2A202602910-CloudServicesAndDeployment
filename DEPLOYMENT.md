@@ -34,6 +34,7 @@ Ghi tên biến và **nguồn giá trị**, không ghi giá trị:
 | `RATE_LIMIT_PER_MINUTE` | ✅ | 10 |
 | `MONTHLY_BUDGET_USD` | ✅ | 10.0 |
 | `LOG_LEVEL` | ✅ | INFO |
+| `GEMINI_API_KEY` | ✅ | Google AI Studio API Key (cho Music Mood Agent) |
 
 ## Lệnh Kiểm Tra
 
